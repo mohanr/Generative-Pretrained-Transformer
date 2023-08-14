@@ -28,11 +28,6 @@ indextoelem = tf.lookup.StaticHashTable(
     name="indextoelem"
 )
 
-def random_sample(text):
-    rand = tf.random.uniform(shape=[], minval=1, maxval=length - 201)
-    start = int(rand)
-    # print(f'Start={int(rand)} Length={length} End={start + 200 + 1}')
-    return tf.strings.substr(text,start, 201, unit='BYTE')
 
 global samplelist,reversesamplelist
 samplelist = []
