@@ -1,6 +1,8 @@
-import tensorflow as  tf
-from Parameters import n_head,n_embd,dropout
 import numpy as np
+import tensorflow as  tf
+
+from Parameters import n_embd, dropout
+
 
 class Head(tf.keras.Model):
     def __init__(self, head_size):
@@ -11,8 +13,8 @@ class Head(tf.keras.Model):
         self.dropout = tf.keras.layers.Dropout(dropout)
 
     def call(self, x):
-        k = self.key(x)   # (B, T, 16)
-        q = self.query(x) # (B, T, 16)
+        k = self.key(x)
+        q = self.query(x)
         transpose = tf.transpose(k,perm=[0,2,1])
         matmul = tf.matmul(q,transpose)
         wei =  tf.divide(matmul, 1/tf.sqrt(tf.cast(n_embd,tf.float32)))
