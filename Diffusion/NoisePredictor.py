@@ -20,6 +20,6 @@ class NoisePredictor(tf.keras.Model):
         )
 
     def call(self, x_t, t):
-        t_embedding = self.t_encoder(tf.one_hot( t - 1, self.T))
+        t_embedding = self.t_encoder(tf.one_hot( tf.cast(t - 1,dtype=tf.int32), self.T))
         inp = tf.concat([x_t, t_embedding], axis=1)
-        return self.model(inp)
+        return self.net(inp)
