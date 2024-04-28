@@ -1,6 +1,7 @@
 import tensorflow as tf
 from Forwardprocess import ForwardProcess
 from NoisePredictor import NoisePredictor
+from ReverseProcess import ReverseProcess
 from sklearn.datasets import make_moons
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -30,10 +31,13 @@ for idx, t in enumerate([0, 2, T]):
 plt.show()
 
 model = NoisePredictor( 10 )
-optimizer = tf.keras.optimizers.Adam(learning_rate=1e-2)
+optimizer = tf.keras.optimizers.Adam(learning_rate=1e-2,
+                                     beta_1=.9,
+                                     beta_2=.999,
+                                     decay=1e-4)
 N = tf.shape(X)[0]
 
-epochs = 1 #5000
+epochs = 10000
 for epoch in range(epochs):
     print("\nStart of epoch %d" % (epoch,))
     t = tf.random.uniform(minval=1, maxval=T + 1, shape=(N,))
@@ -54,3 +58,13 @@ for epoch in range(epochs):
                     "Training loss at step %d: %.4f"
                     % (step, float(loss))
                 )
+rp = ReverseProcess(betas,model)
+samples = rp.sample(1000)
+# samples = tf.reshape(rp.sample(1000),(1000,2))
+print(tf.shape(samples))
+fig,ax = plt.subplots(figsize=(5,5))
+ax.set(xlim=(-1.5, 1.5), ylim=(-1.5, 1.5),aspect="equal")
+sns.kdeplot(x = samples[:,0],y = samples[:,1],ax = ax,fill=True,thresh=0.,cut=15.,clip=(-3,3),bw_adjust=0.5)
+sns.scatterplot(x = samples[:100][:,0],y = samples[:100][:,1],ax = ax)
+ax.set(xlim=(-1.5, 1.5), ylim=(-1.5, 1.5),aspect="equal")
+plt.show()
